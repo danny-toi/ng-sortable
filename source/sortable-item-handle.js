@@ -148,6 +148,8 @@
             event.preventDefault();
             eventObj = $helper.eventObj(event);
 
+            scope.sortableScope = scope.$parent.$parent.sortableScope;
+
             // (optional) Scrollable container as reference for top & left offset calculations, defaults to Document
             scrollableContainer = angular.element($document[0].querySelector(scope.sortableScope.options.scrollableContainer)).length > 0 ?
               $document[0].querySelector(scope.sortableScope.options.scrollableContainer) : $document[0].documentElement;
@@ -189,7 +191,7 @@
             $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
 
             scope.sortableScope.$apply(function () {
-              scope.callbacks.dragStart(dragItemInfo.eventArgs());
+              scope.sortableScope.callbacks.dragStart(dragItemInfo.eventArgs());
             });
             bindEvents();
           };
@@ -265,7 +267,7 @@
 
               eventObj = $helper.eventObj(event);
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragMove(itemPosition, containment);
+                scope.sortableScope.callbacks.dragMove(itemPosition, containment);
               });
               $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
 
@@ -402,14 +404,14 @@
               scope.sortableScope.$apply(function () {
                 if (dragItemInfo.isSameParent()) {
                   if (dragItemInfo.isOrderChanged()) {
-                    scope.callbacks.orderChanged(dragItemInfo.eventArgs());
+                    scope.sortableScope.callbacks.orderChanged(dragItemInfo.eventArgs());
                   }
                 } else {
-                  scope.callbacks.itemMoved(dragItemInfo.eventArgs());
+                  scope.sortableScope.callbacks.itemMoved(dragItemInfo.eventArgs());
                 }
               });
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragEnd(dragItemInfo.eventArgs());
+                scope.sortableScope.callbacks.dragEnd(dragItemInfo.eventArgs());
               });
               dragItemInfo = null;
             }
@@ -432,7 +434,7 @@
               //rollback all the changes.
               rollbackDragChanges();
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragCancel(dragItemInfo.eventArgs());
+                scope.sortableScope.callbacks.dragCancel(dragItemInfo.eventArgs());
               });
               dragItemInfo = null;
             }

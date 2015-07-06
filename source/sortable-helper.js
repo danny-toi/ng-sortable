@@ -219,18 +219,18 @@
         dragItem: function (item) {
 
           return {
-            index: item.index(),
+            index: item.itemScope.index(),
             parent: item.sortableScope,
             source: item,
             sourceInfo: {
-              index: item.index(),
+              index: item.itemScope.index(),
               itemScope: item.itemScope,
               sortableScope: item.sortableScope
             },
             moveTo: function (parent, index) { // Move the item to a new position
               this.parent = parent;
               //If source Item is in the same Parent.
-              if (this.isSameParent() && this.source.index() < index) { // and target after
+              if (this.isSameParent() && this.source.itemScope.index() < index) { // and target after
                 index = index - 1;
               }
               this.index = index;
@@ -252,7 +252,7 @@
             },
             apply: function () {
               this.sourceInfo.sortableScope.removeItem(this.sourceInfo.index); // Remove from source.
-              this.parent.insertItem(this.index, this.source.modelValue); // Insert in to destination.
+              this.parent.insertItem(this.index, this.source.itemScope.modelValue); // Insert in to destination.
             }
           };
         },

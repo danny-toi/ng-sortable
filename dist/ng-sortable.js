@@ -259,18 +259,18 @@
         dragItem: function (item) {
 
           return {
-            index: item.index(),
+            index: item.itemScope.index(),
             parent: item.sortableScope,
             source: item,
             sourceInfo: {
-              index: item.index(),
+              index: item.itemScope.index(),
               itemScope: item.itemScope,
               sortableScope: item.sortableScope
             },
             moveTo: function (parent, index) { // Move the item to a new position
               this.parent = parent;
               //If source Item is in the same Parent.
-              if (this.isSameParent() && this.source.index() < index) { // and target after
+              if (this.isSameParent() && this.source.itemScope.index() < index) { // and target after
                 index = index - 1;
               }
               this.index = index;
@@ -292,7 +292,7 @@
             },
             apply: function () {
               this.sourceInfo.sortableScope.removeItem(this.sourceInfo.index); // Remove from source.
-              this.parent.insertItem(this.index, this.source.modelValue); // Insert in to destination.
+              this.parent.insertItem(this.index, this.source.itemScope.modelValue); // Insert in to destination.
             }
           };
         },
@@ -665,6 +665,8 @@
             event.preventDefault();
             eventObj = $helper.eventObj(event);
 
+            scope.sortableScope = scope.$parent.$parent.sortableScope;
+
             // (optional) Scrollable container as reference for top & left offset calculations, defaults to Document
             scrollableContainer = angular.element($document[0].querySelector(scope.sortableScope.options.scrollableContainer)).length > 0 ?
               $document[0].querySelector(scope.sortableScope.options.scrollableContainer) : $document[0].documentElement;
@@ -706,7 +708,7 @@
             $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
 
             scope.sortableScope.$apply(function () {
-              scope.callbacks.dragStart(dragItemInfo.eventArgs());
+              scope.sortableScope.callbacks.dragStart(dragItemInfo.eventArgs());
             });
             bindEvents();
           };
@@ -782,7 +784,7 @@
 
               eventObj = $helper.eventObj(event);
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragMove(itemPosition, containment);
+                scope.sortableScope.callbacks.dragMove(itemPosition, containment);
               });
               $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
 
@@ -919,14 +921,14 @@
               scope.sortableScope.$apply(function () {
                 if (dragItemInfo.isSameParent()) {
                   if (dragItemInfo.isOrderChanged()) {
-                    scope.callbacks.orderChanged(dragItemInfo.eventArgs());
+                    scope.sortableScope.callbacks.orderChanged(dragItemInfo.eventArgs());
                   }
                 } else {
-                  scope.callbacks.itemMoved(dragItemInfo.eventArgs());
+                  scope.sortableScope.callbacks.itemMoved(dragItemInfo.eventArgs());
                 }
               });
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragEnd(dragItemInfo.eventArgs());
+                scope.sortableScope.callbacks.dragEnd(dragItemInfo.eventArgs());
               });
               dragItemInfo = null;
             }
@@ -949,7 +951,7 @@
               //rollback all the changes.
               rollbackDragChanges();
               scope.sortableScope.$apply(function () {
-                scope.callbacks.dragCancel(dragItemInfo.eventArgs());
+                scope.sortableScope.callbacks.dragCancel(dragItemInfo.eventArgs());
               });
               dragItemInfo = null;
             }
